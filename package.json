@@ -1,0 +1,29 @@
+{
+  "name": "znui-react-uploader",
+  "version": "1.0.0",
+  "description": "Web Uploader component.",
+  "main": "index.all.js",
+  "scripts": {
+    "webpack-example": "rimraf example/dist && webpack --config webpack.config.example.js",
+    "webpack-example-watch": "rimraf example/dist && webpack --config webpack.config.example.js --watch",
+    "clean": "rimraf dist && rimraf build",
+    "build": "npm run clean && babel src -d build",
+    "webpack": "rimraf dist && webpack",
+    "dist": "npm run clean && webpack --uglify",
+    "release": "npm run clean && npm run build && npm run dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/znui/znui-react-uploader.git"
+  },
+  "keywords": [
+    "web component",
+    "uploader"
+  ],
+  "author": "yangyxu",
+  "email": "xuyy0618@qq.com",
+  "license": "MIT",
+  "dependencies": {
+    "znui-react": "^1.1.7"
+  }
+}

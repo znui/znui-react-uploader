@@ -1,0 +1,55 @@
+.znui-react-file-uploader{
+    .file-upload-icon{
+        width: 64px;
+        height: 64px;
+        line-height: 64px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed #ccc;
+        .svg-inline--fa{
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            font-size: 30px;
+            color: #a0a0a0;
+        }
+    }
+    .file-list{
+        overflow: hidden;
+        .file{
+            overflow: hidden;
+            position: relative;
+            float: left;
+            margin: 0px 5px 5px 0px;
+            .fa-remove{
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                padding: 5px;
+                &:hover{
+                    color: red;
+                }
+            }
+            img{
+                width: 96px;
+                height: 96px;
+            }
+            a{
+                font-size: 12px;
+                text-decoration: none;
+                &:hover{
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+    @media (max-width: 720px){
+        .file-list{
+            img{
+                width: 64px !important;
+                height: 64px !important;
+            }
+        }
+    }
+}
