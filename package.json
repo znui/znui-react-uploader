@@ -1,8 +1,8 @@
 {
   "name": "znui-react-uploader",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Web Uploader component.",
-  "main": "index.all.js",
+  "main": "production.js",
   "scripts": {
     "webpack-example": "rimraf example/dist && webpack --config webpack.config.example.js",
     "webpack-example-watch": "rimraf example/dist && webpack --config webpack.config.example.js --watch",
@@ -24,6 +24,6 @@
   "email": "xuyy0618@qq.com",
   "license": "MIT",
   "dependencies": {
-    "znui-react": "^1.1.7"
+    "znui-react": "^1.2.8"
   }
 }

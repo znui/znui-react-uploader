@@ -1,10 +1,9 @@
-require('./AjaxUploader.less');
-var React = require('react');
-var ReactDOM = require('react-dom');
+var React = require('react') || znui.React;
+var ReactDOM = require('react-dom') || znui.ReactDOM;
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
 
-module.exports = React.createClass({
+module.exports = znui.react.createClass({
 	displayName:'AjaxUploader',
 	getDefaultProps: function () {
 		return {
@@ -99,7 +98,7 @@ module.exports = React.createClass({
 	},
 	render: function(){
 		return (
-			<form className={znui.react.classname("znui-react-ajax-uploader", this.props.className)}
+			<form className={znui.react.classname("zr-ajax-uploader", this.props.className)}
 				style={this.props.style}
 				data-loading={this.state.loading}
 				action={zn.http.fixURL(this.props.action||'')}

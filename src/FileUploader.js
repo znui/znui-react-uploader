@@ -1,10 +1,9 @@
-require('./FileUploader.less');
-var React = require('react');
+var React = require('react') || znui.React;
 var AjaxUploader = require('./AjaxUploader');
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
 
-module.exports = React.createClass({
+module.exports = znui.react.createClass({
 	getDefaultProps: function (){
 		return {
 			editable: true
@@ -110,7 +109,7 @@ module.exports = React.createClass({
 		var _values = this.state.value.split(',');
 		var _editable = (this.props.editable && !this.props.disabled && !this.props.readonly);
 		return (
-			<div className={znui.react.classname("znui-react-file-uploader", this.props.className)} style={this.props.style}>
+			<div className={znui.react.classname("zr-file-uploader", this.props.className)} style={this.props.style}>
 				{_editable && <AjaxUploader
 					{...this.props}
 					style={this.props.uploaderStyle}

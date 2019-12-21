@@ -29,6 +29,11 @@ module.exports = {
         //libraryTarget: "this"
         //libraryExport: "default"
     },
+    resolve: {
+        alias: {
+            "znui-react": path.resolve(__dirname, '../znui-react')
+        }
+    },
     module: {
         // Disable handling of unknown requires
         unknownContextRegExp: /$^/,

@@ -1,10 +1,9 @@
-require('./ImageUploader.less');
-var React = require('react');
+var React = require('react') || znui.React;
 var AjaxUploader = require('./AjaxUploader');
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
 
-module.exports = React.createClass({
+module.exports = znui.react.createClass({
 	getDefaultProps: function () {
 		return {
 			value: znui.react.config.get('ImageUploader.value') || ''
@@ -49,7 +48,7 @@ module.exports = React.createClass({
 		return (
 			<AjaxUploader
 				{...this.props}
-				className={znui.react.classname("znui-react-image-uploader", this.props.className)}
+				className={znui.react.classname("zr-image-uploader", this.props.className)}
 				onChange={this.__onChange}
 				onComplete={this.__onComplete}
 				multipart={false} >

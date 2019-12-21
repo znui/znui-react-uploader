@@ -1,4 +1,4 @@
-.znui-react-ajax-uploader {
+.zr-ajax-uploader {
   position: relative;
   overflow: hidden;
   display: inline-block;
@@ -6,7 +6,7 @@
   flex: none !important;
   /*box-shadow: 0 4px 14px 0 rgba(184, 185, 185, 0.54), inset 0 0 10px 0 #f9f9fa;*/
 }
-.znui-react-ajax-uploader input[type=file] {
+.zr-ajax-uploader input[type=file] {
   opacity: 0;
   position: absolute;
   left: 0px;
@@ -15,7 +15,7 @@
   height: 100%;
   z-index: 2;
 }
-.znui-react-ajax-uploader > .ajax-upload-icon {
+.zr-ajax-uploader > .ajax-upload-icon {
   position: absolute;
   top: 0px;
   width: 100%;
@@ -28,13 +28,13 @@
   z-index: 1;
   opacity: 0;
 }
-.znui-react-ajax-uploader > .ajax-upload-icon .svg-inline--fa {
+.zr-ajax-uploader > .ajax-upload-icon .svg-inline--fa {
   width: 32px;
   height: 32px;
   line-height: 32px;
   font-size: 30px;
 }
-.znui-react-ajax-uploader .size {
+.zr-ajax-uploader .size {
   position: absolute;
   z-index: 11;
   top: 4px;
@@ -44,16 +44,16 @@
   font-weight: bold;
   text-align: center;
 }
-.znui-react-ajax-uploader:hover > .ajax-upload-container {
+.zr-ajax-uploader:hover > .ajax-upload-container {
   opacity: 0.6;
 }
-.znui-react-ajax-uploader:hover > .ajax-upload-icon {
+.zr-ajax-uploader:hover > .ajax-upload-icon {
   opacity: 0.8;
 }
-.znui-react-ajax-uploader:hover > .ajax-upload-icon .svg-inline--fa {
+.zr-ajax-uploader:hover > .ajax-upload-icon .svg-inline--fa {
   color: #0C72A5;
 }
-.znui-react-ajax-uploader[data-loading="true"] > .ajax-upload-icon {
+.zr-ajax-uploader[data-loading="true"] > .ajax-upload-icon {
   color: #3790f2;
   opacity: 0.8;
   -webkit-animation: up 1s linear;
@@ -67,7 +67,7 @@
     -webkit-transform: translateY(5px);
   }
 }
-.znui-react-file-uploader .file-upload-icon {
+.zr-file-uploader .file-upload-icon {
   width: 64px;
   height: 64px;
   line-height: 64px;
@@ -76,49 +76,49 @@
   align-items: center;
   border: 2px dashed #ccc;
 }
-.znui-react-file-uploader .file-upload-icon .svg-inline--fa {
+.zr-file-uploader .file-upload-icon .svg-inline--fa {
   width: 32px;
   height: 32px;
   line-height: 32px;
   font-size: 30px;
   color: #a0a0a0;
 }
-.znui-react-file-uploader .file-list {
+.zr-file-uploader .file-list {
   overflow: hidden;
 }
-.znui-react-file-uploader .file-list .file {
+.zr-file-uploader .file-list .file {
   overflow: hidden;
   position: relative;
   float: left;
   margin: 0px 5px 5px 0px;
 }
-.znui-react-file-uploader .file-list .file .fa-remove {
+.zr-file-uploader .file-list .file .fa-remove {
   position: absolute;
   top: 0px;
   right: 0px;
   padding: 5px;
 }
-.znui-react-file-uploader .file-list .file .fa-remove:hover {
+.zr-file-uploader .file-list .file .fa-remove:hover {
   color: red;
 }
-.znui-react-file-uploader .file-list .file img {
+.zr-file-uploader .file-list .file img {
   width: 96px;
   height: 96px;
 }
-.znui-react-file-uploader .file-list .file a {
+.zr-file-uploader .file-list .file a {
   font-size: 12px;
   text-decoration: none;
 }
-.znui-react-file-uploader .file-list .file a:hover {
+.zr-file-uploader .file-list .file a:hover {
   text-decoration: underline;
 }
 @media (max-width: 720px) {
-  .znui-react-file-uploader .file-list img {
+  .zr-file-uploader .file-list img {
     width: 64px !important;
     height: 64px !important;
   }
 }
-.znui-react-image-uploader .image-upload-icon {
+.zr-image-uploader .image-upload-icon {
   width: 64px;
   height: 64px;
   line-height: 64px;
@@ -127,18 +127,18 @@
   align-items: center;
   border: 2px dashed #ccc;
 }
-.znui-react-image-uploader .image-upload-icon .svg-inline--fa {
+.zr-image-uploader .image-upload-icon .svg-inline--fa {
   width: 32px;
   height: 32px;
   line-height: 32px;
   font-size: 30px;
   color: #a0a0a0;
 }
-.znui-react-image-uploader > .container .img {
+.zr-image-uploader > .container .img {
   width: 64px;
   height: 64px;
 }
-.znui-react-image-uploader > .container .upload {
+.zr-image-uploader > .container .upload {
   display: flex;
   align-items: center;
   justify-content: center;
