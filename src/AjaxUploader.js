@@ -1,5 +1,5 @@
-var React = require('react') || znui.React;
-var ReactDOM = require('react-dom') || znui.ReactDOM;
+var React = znui.React || require('react');
+var ReactDOM = znui.ReactDOM || require('react-dom');
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
 
@@ -7,7 +7,7 @@ module.exports = znui.react.createClass({
 	displayName:'AjaxUploader',
 	getDefaultProps: function () {
 		return {
-			action: znui.react.config.get('AjaxUploader.action') || '',
+			action: '',
 			changeSubmit: true,
 			hiddens: null,
 			multiple: true,

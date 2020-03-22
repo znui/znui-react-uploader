@@ -1,12 +1,12 @@
-var React = require('react') || znui.React;
+var React = znui.React || require('react');
 var AjaxUploader = require('./AjaxUploader');
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
 
-module.exports = znui.react.createClass({
+module.exports = React.createClass({
 	getDefaultProps: function () {
 		return {
-			value: znui.react.config.get('ImageUploader.value') || ''
+			value: ''
 		};
 	},
 	getInitialState: function() {

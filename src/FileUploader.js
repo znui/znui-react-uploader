@@ -1,4 +1,4 @@
-var React = require('react') || znui.React;
+var React = znui.React || require('react');
 var AjaxUploader = require('./AjaxUploader');
 var ReactFA = require('@fortawesome/react-fontawesome');
 var ReactSVGIcons = require('@fortawesome/free-solid-svg-icons');
