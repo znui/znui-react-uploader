@@ -1,35 +1,28 @@
 .zr-image-uploader{
-    .image-upload-icon{
+    
+    .image-container{
+        display: flex;
+        border: 2px dashed #ccc;
         width: 64px;
         height: 64px;
-        line-height: 64px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 2px dashed #ccc;
-        .svg-inline--fa{
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            font-size: 30px;
-            color: #a0a0a0;
-        }
-    }
-    &>.container{
+        overflow: hidden;
         .img{
-            width: 64px;
-            height: 64px;
+            width: 100%;
+            height: 100%;
         }
-        .upload {
+        .img-upload-icon{
+            width: 100%;
+            height: 100%;
             display: flex;
-            align-items: center;
             justify-content: center;
-            width: 64px;
-            height: 64px;
-            text-align: center;
-            font-size: 30px;
-            border: 2px dashed #ccc;
-            color: #a0a0a0;
+            align-items: center;
+            .svg-inline--fa{
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 30px;
+                color: #a0a0a0;
+            }
         }
     }
 }

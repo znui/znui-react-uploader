@@ -6,10 +6,7 @@ module.exports = require(_path + 'znui-react/webpack').component.production(func
         externals: {
             "react": "React",
             "react-dom": "ReactDOM",
-            "znui-react": "zr",
-            "@fortawesome/react-fontawesome":"rf",
-            "@fortawesome/fontawesome-svg-core":"fsc",
-            "@fortawesome/free-solid-svg-icons":"fssi"
+            "znui-react": "zr"
         }
     };
 });

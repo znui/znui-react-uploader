@@ -1,6 +1,6 @@
 {
   "name": "znui-react-uploader",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Web Uploader component.",
   "main": "index.js",
   "scripts": {
@@ -29,9 +29,6 @@
   "email": "xuyy0618@qq.com",
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.27",
-    "@fortawesome/free-solid-svg-icons": "latest",
-    "@fortawesome/react-fontawesome": "latest",
     "znui-react": "latest"
   }
 }
