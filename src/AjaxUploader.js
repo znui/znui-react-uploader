@@ -7,6 +7,7 @@ module.exports = znui.react.createClass({
 		return {
 			name: 'zr_ajax_uploader_file',
 			action: '/zxnz.core.fs/upload/files',
+			types: [],
 			changeSubmit: true,
 			hiddens: null,
 			multiple: true,
@@ -19,6 +20,7 @@ module.exports = znui.react.createClass({
 		return {
 			host: this.props.host || zn.setting.path('zr.uploader.host'),
 			loading: false,
+			files: [],
 			progress: 0,
 			timeStamp: 0
 		};
@@ -27,40 +29,31 @@ module.exports = znui.react.createClass({
 		if(this.state.loading){
 			return false;
 		}
+		this.state.files = [];
 		var _files = event.nativeEvent.target.files,
-			_formData = new FormData(),
-			_tempFiles = [];
+			_file = null;
 		if(!_files.length){
 			return alert('未选择文件');
 		}
 
-		for(var i = 0, _len = _files.length; i<_len; i++){
-			if(_files[i].size > this.props.maxFileSize){
-				alert(_files[i].name + " 文件大小是" + znui.react.stringifyFileSize(_files[i].size)+ ", 不能超过" + znui.react.stringifyFileSize(this.props.maxFileSize));
+		for(var i = 0, _len = _files.length; i < _len; i++){
+			_file = _files[i];
+			if(_file.size > this.props.maxFileSize){
+				alert(_file.name + " 文件大小是" + znui.react.stringifyFileSize(_file.size)+ ", 不能超过" + znui.react.stringifyFileSize(this.props.maxFileSize));
 				return event.nativeEvent.target.form.reset(), false;
 			}
-			_tempFiles.push(_files[i]);
-			_formData.append(this.props.name + '_' + i, _files[i]);
+			if(this.props.types.length) {
+				if(this.props.types.indexOf(_file.type.split('/')[0]) == -1){
+					return alert('只支持' + this.props.types.join(',') + '的文件类型'), false;
+				}
+			}
+
+			this.state.files.push(_file);
 		}
 		
-		var _result = this.props.onChange && this.props.onChange(_tempFiles, this);
+		var _result = this.props.onChange && this.props.onChange(this.state.files, this);
 		if(_result!==false && this.props.changeSubmit){
-			var _hiddens = this.props.hiddens||{},
-				_hidden = null;
-
-			if(zn.is(_result, 'object')){
-				zn.extend(_hiddens, _result);
-			}
-
-			for(var key in _hiddens){
-				_hidden = _hiddens[key];
-				if(typeof _hidden == 'object'){
-					_hidden = JSON.stringify(_hidden);
-				}
-
-				_formData.append(key, _hidden);
-			}
-			this.ajaxUpload(_formData);
+			this.submit(this.state.files, _result);
 		}
 	},
 	__onInputClick: function (event){
@@ -69,6 +62,31 @@ module.exports = znui.react.createClass({
 		}
 		event.stopPropagation();
 		this.props.onUploaderClick && this.props.onUploaderClick(event, this);
+	},
+	submit: function (files, data){
+		var _file = files || this.state.files,
+			_formData = new FormData(),
+			_hiddens = this.props.hiddens || {},
+			_hidden = null;
+
+		if(zn.is(data, 'object')){
+			zn.extend(_hiddens, data);
+		}
+
+		for(var i = 0, _len = _file.length; i < _len; i++){
+			_formData.append(this.props.name + '_' + i, _file[i]);
+		}
+
+		for(var key in _hiddens){
+			_hidden = _hiddens[key];
+			if(typeof _hidden == 'object'){
+				_hidden = JSON.stringify(_hidden);
+			}
+
+			_formData.append(key, _hidden);
+		}
+
+		this.ajaxUpload(_formData);
 	},
 	ajaxUpload: function (data){
 		var _host = this.state.host || zn.setting.path('zr.uploader.uploadHost'),
@@ -106,7 +124,7 @@ module.exports = znui.react.createClass({
 			if(_data.code == 200){
 				this.props.onComplete && this.props.onComplete(_data.result, this);
 			}else {
-				alert(_data.result||_data.message);
+				console.error(_data.result||_data.message);
 				this.props.onError && this.props.onError(_data.result, this);
 			}
 		}

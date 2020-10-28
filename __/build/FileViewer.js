@@ -40,10 +40,14 @@ module.exports = znui.react.createClass({
       _api = _host + _api;
       if (!_api) return console.error("文件验证接口未输入"), false;
       zn.data.get(_api + value).then(function (response) {
-        if (response.status == 200 && _typeof(response.data) == 'object' && response.data.code == 200 && zn.is(response.data.result, 'object')) {
-          this.setFiles(response.data.result);
-        } else {
-          console.error("FileViewer.js 网络请求错误");
+        if (zn.is(response, 'array')) {
+          this.setFiles(response);
+        } else if (zn.is(response, 'object')) {
+          if (response.status == 200 && _typeof(response.data) == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')) {
+            this.setFiles(response.data.result);
+          } else {
+            console.error("FileViewer.js 网络请求错误: ", response);
+          }
         }
       }.bind(this), function () {
         console.error("FileViewer.js 网络请求错误");
@@ -90,8 +94,10 @@ module.exports = znui.react.createClass({
     if (file.type.indexOf('image') == 0) {
       _src = (this.props.host || zn.setting.path('zr.uploader.host') || '') + (zn.setting.path('zr.uploader.fetchImageApi') || '') + file[this.props.valueKey];
       _view = /*#__PURE__*/React.createElement("img", {
-        width: this.props.width,
-        height: this.props.height,
+        style: {
+          width: '100%',
+          height: 'auto'
+        },
         className: "view img-view",
         src: _src
       });

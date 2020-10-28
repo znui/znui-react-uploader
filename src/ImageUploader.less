@@ -1,10 +1,12 @@
 .zr-image-uploader{
     
     .image-container{
+        position: relative;
         display: flex;
+        align-items: center;
         border: 2px dashed #ccc;
-        width: 64px;
-        height: 64px;
+        min-width: 64px;
+        min-height: 64px;
         overflow: hidden;
         .img{
             width: 100%;
@@ -23,6 +25,33 @@
                 font-size: 30px;
                 color: #a0a0a0;
             }
+        }
+        .compress-info{
+            position: absolute;
+            top: 0px;
+            font-size: 10px;
+            line-height: 10px;
+            /*
+            background-color: #f36a09;*/
+            color: #FFFFFF;
+            opacity: 0.8;
+            .original{
+                padding: 3px;
+                background-color: #4b5256;
+            }
+            .compress{
+                padding: 3px;
+                background-color: #0bce2c;
+            }
+        }
+
+        .compressing{
+            position: absolute;
+            bottom: 0px;
+            font-size: 8px;
+            padding: 1px 2px;
+            color: #FFFFFF;
+            background-color: #f36a09;
         }
     }
 }

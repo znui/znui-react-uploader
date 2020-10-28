@@ -43,7 +43,8 @@
   z-index: 11;
   bottom: 0px;
   text-align: center;
-  font-size: 11px;
+  line-height: 10px;
+  font-size: 9px;
   font-weight: bold;
   color: #bf1131;
   background-color: #a5a4a785;
@@ -102,6 +103,12 @@
   justify-content: center;
   align-items: center;
 }
+.zr-file-uploader .upload-container .file-upload-icon .compressing {
+  position: absolute;
+  font-size: 12px;
+  font-weight: bolder;
+  color: red;
+}
 .zr-file-uploader .upload-container .file-upload-icon .svg-inline--fa {
   width: 32px;
   height: 32px;
@@ -129,7 +136,7 @@
   position: absolute;
   top: 0px;
   right: 0px;
-  padding: 5px;
+  padding: 8px;
   width: 14px;
   height: 14px;
   color: #ea6767;
@@ -173,8 +180,13 @@
     height: 64px !important;
   }
 }
-.zr-file-viewer {
+.zr-files-viewer .file-list {
   overflow: hidden;
+  list-style: none;
+  padding: 5px 0px;
+  margin: 0px;
+}
+.zr-file-viewer {
   position: relative;
   margin: 0px 5px 5px 0px;
   border: 1px solid #efe9e9;
@@ -210,14 +222,14 @@
   box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
 }
 .zr-file-viewer .file-info {
-  position: absolute;
   background-color: #f4f4f594;
   bottom: 0px;
   right: 0;
-  padding: 5px;
+  padding: 5px 0px;
   z-index: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: #434fef;
 }
 .zr-file-viewer .file-info .link {
@@ -260,10 +272,12 @@
   color: #fb0733;
 }
 .zr-image-uploader .image-container {
+  position: relative;
   display: flex;
+  align-items: center;
   border: 2px dashed #ccc;
-  width: 64px;
-  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
   overflow: hidden;
 }
 .zr-image-uploader .image-container .img {
@@ -283,6 +297,32 @@
   line-height: 32px;
   font-size: 30px;
   color: #a0a0a0;
+}
+.zr-image-uploader .image-container .compress-info {
+  position: absolute;
+  top: 0px;
+  font-size: 10px;
+  line-height: 10px;
+  /*
+            background-color: #f36a09;*/
+  color: #FFFFFF;
+  opacity: 0.8;
+}
+.zr-image-uploader .image-container .compress-info .original {
+  padding: 3px;
+  background-color: #4b5256;
+}
+.zr-image-uploader .image-container .compress-info .compress {
+  padding: 3px;
+  background-color: #0bce2c;
+}
+.zr-image-uploader .image-container .compressing {
+  position: absolute;
+  bottom: 0px;
+  font-size: 8px;
+  padding: 1px 2px;
+  color: #FFFFFF;
+  background-color: #f36a09;
 }
 .zr-progress-ring {
   position: relative;

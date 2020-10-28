@@ -6,14 +6,20 @@ module.exports = znui.react.createClass({
 	getDefaultProps: function (){
 		return {
 			valueKey: 'tempName',
-			editable: true
+			editable: true,
+			compress: {
+				maxWidth: 1024,
+				maxHeight: 768,
+				quality: 1
+			}
 		};
 	},
 	getInitialState: function () {
     	return {
 			host: this.props.host || zn.setting.path('zr.uploader.host'),
 			value: [],
-			files: []
+			files: [],
+			compressing: false
 		};
 	  },
 	componentDidMount: function (){
@@ -23,6 +29,62 @@ module.exports = znui.react.createClass({
 		}
 	},
 	__onChange: function (files, ajaxUploader){
+		if(this.props.compress) {
+			var _files = [],
+				_queue = zn.queue({}, {
+					every: function (sender, file){
+						_files.push(file);
+					},
+					finally: function (sender){
+						this.setState({
+							compressing: false
+						});
+						ajaxUploader.submit(_files);
+					}.bind(this)
+				}),
+				_compress = zn.extend({
+					maxWidth: 1024,
+					maxHeight: 768,
+					quality: 1
+				}, this.props.compress),
+				_imageReader = new FileReader(),
+				_img = new Image();
+			_imageReader.onload = function (event){
+				_img.src = event.target.result;
+			};
+			this.setState({
+				compressing: true
+			});
+			for(var file of files){
+				if(file.type.indexOf('image') === 0){
+					(function (file){
+						_queue.push(function (task){
+							_imageReader.readAsDataURL(file);
+							_img.onload = function (){
+								var _canvas = znui.imageToCanvas(_img, _compress.maxWidth, _compress.maxHeight);
+								_canvas.toBlob(function (blob){
+									task.done(new File([blob], file.name, { 
+										lastModifiedDate: new Date().getTime(),
+										type: file.type
+									}));
+								}, file.type, _compress.quality);
+							}
+						});
+					})(file);
+				} else {
+					(function (file){
+						_queue.push(function (task){
+							task.done(file);
+						});
+					})(file);
+				}
+			}
+			
+			_queue.start();
+
+			return false;
+		}
+
 		this.props.onUploaderChange && this.props.onUploaderChange(files, ajaxUploader, this);
 	},
 	initValue: function (value){
@@ -35,10 +97,14 @@ module.exports = znui.react.createClass({
 			value = value.join(',');
 		}
 		zn.data.get(_api + value).then(function (response){
-			if(response.status==200 && typeof response.data == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')){
-				this.setFiles(response.data.result);
-			}else{
-				console.error("网络请求错误");
+			if(zn.is(response, 'array')){
+				this.setFiles(response);
+			}else if(zn.is(response, 'object')){
+				if(response.status==200 && typeof response.data == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')){
+					this.setFiles(response.data.result);
+				}else{
+					console.error("网络请求错误: ", response);
+				}
 			}
 		}.bind(this), function (){
 			console.error("网络请求错误");
@@ -46,7 +112,7 @@ module.exports = znui.react.createClass({
 	},
 	__onComplete: function (data, uploader){
 		this.setFiles(data);
-		this.props.onChange && this.props.onChange(this.state.value, this);
+		this.props.onChange && this.props.onChange({ value: this.state.value }, this);
 		this.props.onComplete && this.props.onComplete(data, uploader, this);
 	},
 	setFiles: function (files){
@@ -73,6 +139,12 @@ module.exports = znui.react.createClass({
 		this.state.files.splice(index, 1);
 		this.state.value.splice(index, 1);
 		this.forceUpdate();
+		this.props.onChange && this.props.onChange({
+			file: file,
+			index: index,
+			value: this.state.value,
+			files: this.state.files
+		}, this);
 	},
 	__fileDownloadRender: function (file){
 		var _host = this.state.host || zn.setting.path('zr.uploader.downloadHost'),
@@ -120,6 +192,7 @@ module.exports = znui.react.createClass({
 						<div className="upload-container" style={this.props.style}>
 							<div className="file-upload-icon">
 								<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-upload" className="svg-inline--fa fa-file-upload fa-w-12 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm65.18 216.01H224v80c0 8.84-7.16 16-16 16h-32c-8.84 0-16-7.16-16-16v-80H94.82c-14.28 0-21.41-17.29-11.27-27.36l96.42-95.7c6.65-6.61 17.39-6.61 24.04 0l96.42 95.7c10.15 10.07 3.03 27.36-11.25 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"></path></svg>
+								{this.state.compressing && <span className="compressing">压缩中...</span>}
 							</div>
 						</div>
 					</AjaxUploader>

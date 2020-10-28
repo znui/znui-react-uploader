@@ -10,24 +10,86 @@ module.exports = React.createClass({
   displayName: 'ImageUploader',
   getDefaultProps: function getDefaultProps() {
     return {
-      value: ''
+      value: '',
+      compress: {
+        maxWidth: 1024,
+        maxHeight: 768,
+        quality: 1
+      }
     };
   },
   getInitialState: function getInitialState() {
     return {
       value: this.props.value,
-      imageDataURL: null
+      imageDataURL: null,
+      original: null,
+      compress: null,
+      compressing: false
     };
   },
-  __onChange: function __onChange(files) {
+  __onChange: function __onChange(files, ajaxUploader) {
     var _file = files[0];
 
     if (_file.type.indexOf('image') == -1) {
-      alert(_file.name + ' 不是图片文件');
-      return false;
+      return alert(_file.name + ' 不是图片文件'), false;
     }
 
-    if (FileReader) {
+    if (!FileReader || !Image) {
+      return alert('浏览器不支持预览功能'), false;
+    }
+
+    if (this.props.compress) {
+      this.setState({
+        compressing: true
+      });
+
+      var _self = this,
+          _compress = zn.extend({
+        maxWidth: 1024,
+        maxHeight: 768,
+        quality: 1
+      }, this.props.compress),
+          _imageReader = new FileReader(),
+          _img = new Image();
+
+      _imageReader.onload = function (event) {
+        _img.src = event.target.result;
+      };
+
+      _imageReader.readAsDataURL(_file);
+
+      _img.onload = function () {
+        _self.state.original = {
+          size: znui.react.stringifyFileSize(_file.size),
+          width: _img.width,
+          height: _img.height
+        };
+
+        var _canvas = znui.imageToCanvas(_img, _compress.maxWidth, _compress.maxHeight);
+
+        _self.state.imageDataURL = _canvas.toDataURL(_file.type, _compress.quality);
+
+        _canvas.toBlob(function (blob) {
+          _self.state.compressing = false;
+
+          if (blob) {
+            _self.state.compress = {
+              size: znui.react.stringifyFileSize(blob.size),
+              width: _canvas.width,
+              height: _canvas.height
+            };
+            ajaxUploader.submit([new File([blob], _file.name, {
+              lastModifiedDate: new Date().getTime(),
+              type: _file.type
+            })]);
+          }
+
+          _self.forceUpdate();
+        }, _file.type, _compress.quality);
+      };
+
+      return false;
+    } else {
       var _imageReader = new FileReader();
 
       _imageReader.onload = function (event) {
@@ -55,7 +117,9 @@ module.exports = React.createClass({
     this.setState({
       value: value
     }, function () {
-      this.props.onChange && this.props.onChange(value, this);
+      this.props.onChange && this.props.onChange({
+        value: value
+      }, this);
     }.bind(this));
   },
   __renderImage: function __renderImage() {
@@ -105,6 +169,14 @@ module.exports = React.createClass({
     }), /*#__PURE__*/React.createElement("div", {
       className: "image-container",
       style: this.props.style
-    }, this.__renderImage()));
+    }, this.__renderImage(), this.state.compress && /*#__PURE__*/React.createElement("div", {
+      className: "compress-info"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "original"
+    }, "\u538B\u7F29\u524D\uFF1A", this.state.original.width, " x ", this.state.original.height, " (", this.state.original.size, ")"), /*#__PURE__*/React.createElement("div", {
+      className: "compress"
+    }, "\u538B\u7F29\u540E\uFF1A", this.state.compress.width, " x ", this.state.compress.height, " (", this.state.compress.size, ")")), this.state.compressing && /*#__PURE__*/React.createElement("span", {
+      className: "compressing"
+    }, "\u538B\u7F29\u4E2D...")));
   }
 });
