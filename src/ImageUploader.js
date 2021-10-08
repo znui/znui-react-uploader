@@ -88,7 +88,7 @@ module.exports = React.createClass({
 	__onComplete: function (data, uploader){
 		var _file = data[0];
 		if(_file){
-			this.setValue(_file[this.props.valueKey || 'savedName']);
+			this.setValue(_file[this.props.valueKey || 'tempName']);
 		}
 		this.props.onComplete && this.props.onComplete(_file, this);
 	},
@@ -133,8 +133,8 @@ module.exports = React.createClass({
 					{this.__renderImage()}
 					{
 						this.state.compress && <div className="compress-info">
-							<div className="original">压缩前：{this.state.original.width} x {this.state.original.height} ({this.state.original.size})</div>
-							<div className="compress">压缩后：{this.state.compress.width} x {this.state.compress.height} ({this.state.compress.size})</div>
+							<div className="original">前：{this.state.original.width} x {this.state.original.height} ({this.state.original.size})</div>
+							<div className="compress">后：{this.state.compress.width} x {this.state.compress.height} ({this.state.compress.size})</div>
 						</div>
 					}
 					{

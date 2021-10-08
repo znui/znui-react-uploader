@@ -1,10 +1,8 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 var React = znui.React || require('react');
 
-var FileViewer = require('./FileViewer');
+var FileListItem = require('./FileListItem');
 
 module.exports = znui.react.createClass({
   displayName: 'FilesViewer',
@@ -17,8 +15,8 @@ module.exports = znui.react.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      host: this.props.host || zn.setting.path('zr.uploader.host'),
-      files: []
+      files: [],
+      value: []
     };
   },
   componentDidMount: function componentDidMount() {
@@ -28,10 +26,24 @@ module.exports = znui.react.createClass({
       this.initValue(this.props.value);
     }
   },
-  initValue: function initValue(value) {
-    if (!value) return;
+  __resolveFileApi: function __resolveFileApi() {
+    var _host = this.props.host || zn.setting.path('zr.uploader.host') || zn.setting.path('zr.uploader.uploadHost') || '',
+        _api = this.props.fetchsApi || zn.setting.path('zr.uploader.fetchsApi');
 
-    if (zn.is(value[0], 'object')) {
+    _api = _host + _api;
+
+    if (_api) {
+      return _api;
+    }
+
+    return console.error("文件接口未输入"), false;
+  },
+  initValue: function initValue(value) {
+    var _api = this.__resolveFileApi();
+
+    if (!_api || !value) return;
+
+    if (zn.is(value, 'object')) {
       return this.setFiles([value]), false;
     }
 
@@ -39,28 +51,20 @@ module.exports = znui.react.createClass({
       return this.setFiles(value), false;
     }
 
-    var _host = this.state.host,
-        _api = this.props.fetchsApi || zn.setting.path('zr.uploader.fetchsApi');
-
-    _api = _host + _api;
-    if (!_api) return console.error("FilesViewer.js 文件验证接口未输入"), false;
-
     if (zn.is(value, 'array')) {
       value = value.join(',');
     }
 
     zn.data.get(_api + value).then(function (response) {
-      if (zn.is(response, 'array')) {
-        this.setFiles(response);
-      } else if (zn.is(response, 'object')) {
-        if (response.status == 200 && _typeof(response.data) == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')) {
-          this.setFiles(response.data.result);
-        } else {
-          console.error("FilesViewer.js 网络请求错误 ", response);
-        }
+      var _files = znui.react.resolveArrayResult(response);
+
+      if (_files) {
+        this.setFiles(_files);
+      } else {
+        console.error("FilesViewer.js - 网络请求错误: ", response);
       }
-    }.bind(this), function () {
-      console.error("FilesViewer.js 网络请求错误");
+    }.bind(this), function (err) {
+      console.error("FilesViewer.js - 网络请求错误: ", err);
     });
   },
   setFiles: function setFiles(files) {
@@ -73,24 +77,31 @@ module.exports = znui.react.createClass({
         className: "file-list"
       }, this.state.files.map(function (file, index) {
         if (file) {
-          var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
+          var _return = this.props.onFileRender && this.props.onFileRender(file, index, this);
 
-          if (_temp) {
-            return _temp;
+          if (_return) {
+            return _return;
           }
 
-          return /*#__PURE__*/React.createElement(FileViewer, {
+          return /*#__PURE__*/React.createElement(FileListItem, {
+            host: this.props.host,
             key: index,
-            width: this.props.width,
-            height: this.props.height,
-            value: file,
-            valueKey: this.props.valueKey
+            data: file,
+            editable: this.props.editable
           });
         }
       }.bind(this)));
     }
   },
   render: function render() {
+    if (!this.state.files) {
+      return /*#__PURE__*/React.createElement("div", {
+        className: "zr-file-viewer"
+      }, /*#__PURE__*/React.createElement("i", {
+        className: "fa fa-spinner"
+      }), /*#__PURE__*/React.createElement("span", null, "\u52A0\u8F7D\u4E2D ... "));
+    }
+
     return /*#__PURE__*/React.createElement("div", {
       className: znui.react.classname("zr-files-viewer", this.props.className),
       style: znui.react.style(this.props.style)

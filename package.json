@@ -1,6 +1,6 @@
 {
   "name": "znui-react-uploader",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Web Uploader component.",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,7 @@
   "email": "xuyy0618@qq.com",
   "license": "MIT",
   "dependencies": {
+    "react-pdfobject": "^1.1.1",
     "znui-react": "latest"
   }
 }

@@ -180,96 +180,128 @@
     height: 64px !important;
   }
 }
-.zr-files-viewer .file-list {
-  overflow: hidden;
-  list-style: none;
-  padding: 5px 0px;
-  margin: 0px;
-}
-.zr-file-viewer {
+.zr-file-list-item {
   position: relative;
-  margin: 0px 5px 5px 0px;
-  border: 1px solid #efe9e9;
-  background-color: #fdfcfc;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 5px 0px;
 }
-.zr-file-viewer.full-screen {
+.zr-file-list-item.full-screen {
   position: fixed;
   width: 100%;
   height: 100%;
-  top: 0px;
+  top: -6px;
   left: 0px;
   bottom: 0px;
   right: 0px;
   z-index: 10;
   overflow: auto;
 }
-.zr-file-viewer.full-screen .file-info {
+.zr-file-list-item.full-screen .file-info {
   right: auto;
 }
-.zr-file-viewer.full-screen .file-view {
+.zr-file-list-item.full-screen .file-view {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
 }
-.zr-file-viewer.full-screen .view {
+.zr-file-list-item.full-screen .img-view {
+  width: auto !important;
+  height: auto !important;
+}
+.zr-file-list-item.full-screen .view {
   width: auto;
   height: auto;
-  box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
 }
-.zr-file-viewer .file-info {
-  background-color: #f4f4f594;
+.zr-file-list-item .file-info {
   bottom: 0px;
   right: 0;
-  padding: 5px 0px;
   z-index: 1;
+  top: 0px;
   display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
-  color: #434fef;
+  color: #2c49d8;
+  border-collapse: collapse;
+  background-color: #fbfbfb;
+  border: 1px dashed #d4d0d0;
 }
-.zr-file-viewer .file-info .link {
+.zr-file-list-item .file-info .item-btns {
+  font-size: 20px;
+  margin: 10px;
+}
+.zr-file-list-item .file-info .file-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.zr-file-list-item .file-info .file-detail .time {
+  font-size: 12px;
+  line-height: 14px;
+  color: #8a8787;
+}
+.zr-file-list-item .file-info .link {
   font-size: 12px;
   text-decoration: none;
   font-family: sans-serif;
   cursor: pointer;
+  line-height: 16px;
+  padding: 5px 0px;
 }
-.zr-file-viewer .file-info .link:hover {
+.zr-file-list-item .file-info .link:hover {
   text-decoration: underline;
 }
-.zr-file-viewer .file-info .download .fa-download {
+.zr-file-list-item .file-info .download .fa-download {
   cursor: pointer;
   padding: 0px 5px;
   width: 14px;
   height: 14px;
 }
-.zr-file-viewer .file-info .download .fa-download:hover {
+.zr-file-list-item .file-info .download .fa-download:hover {
   color: #3790f2;
 }
-.zr-file-viewer .file-info .size {
+.zr-file-list-item .file-info .size {
   font-weight: bolder;
   font-family: monospace;
   color: #bf1131;
   padding: 3px 6px;
 }
-.zr-file-viewer .file-info .svg-inline--fa {
+.zr-file-list-item .file-info .svg-inline--fa {
   cursor: pointer;
   padding: 0px 5px;
   width: 16px;
   height: 16px;
 }
-.zr-file-viewer .file-info .svg-inline--fa.fa-tv:hover {
+.zr-file-list-item .file-info .svg-inline--fa.fa-tv:hover {
   color: #3790f2;
 }
-.zr-file-viewer .file-info .svg-inline--fa.fa-window-close {
+.zr-file-list-item .file-info .svg-inline--fa.fa-window-close {
   color: #f14d6b;
 }
-.zr-file-viewer .file-info .svg-inline--fa.fa-window-close:hover {
+.zr-file-list-item .file-info .svg-inline--fa.fa-window-close:hover {
   color: #fb0733;
+}
+.zr-file-list-item .file-content {
+  display: inline-grid;
+  width: 100%;
+  height: 100%;
+  background-color: #fdf7f7;
+}
+.zr-file-list-item .file-content .view {
+  border-collapse: collapse;
+}
+.zr-file-list-item .file-content video {
+  width: 100%;
+}
+.zr-files-viewer .file-list {
+  overflow: hidden;
+  list-style: none;
+  padding: 4px 0px;
+  margin: 0px;
+}
+.zr-image-uploader:hover .compress-info {
+  display: inline-block !important;
 }
 .zr-image-uploader .image-container {
   position: relative;
@@ -301,8 +333,9 @@
 .zr-image-uploader .image-container .compress-info {
   position: absolute;
   top: 0px;
-  font-size: 10px;
-  line-height: 10px;
+  font-size: 8px;
+  line-height: 8px;
+  display: none;
   /*
             background-color: #f36a09;*/
   color: #FFFFFF;

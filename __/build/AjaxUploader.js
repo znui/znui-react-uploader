@@ -17,13 +17,13 @@ module.exports = znui.react.createClass({
       hiddens: null,
       multiple: true,
       hint: false,
-      maxFileSize: 500 * 1024 * 1024,
+      maxFileSize: 200 * 1024 * 1024,
       size: ''
     };
   },
   getInitialState: function getInitialState() {
     return {
-      host: this.props.host || zn.setting.path('zr.uploader.host'),
+      host: this.props.host,
       loading: false,
       files: [],
       progress: 0,
@@ -74,6 +74,14 @@ module.exports = znui.react.createClass({
     event.stopPropagation();
     this.props.onUploaderClick && this.props.onUploaderClick(event, this);
   },
+  __resolveUploadAction: function __resolveUploadAction() {
+    var _host = this.state.host || zn.setting.path('zr.uploader.host') || zn.setting.path('zr.uploader.uploadHost') || '',
+        _api = this.props.action || this.props.uploadApi || zn.setting.path('zr.uploader.uploadApi') || '';
+
+    _api = _host + _api;
+    if (!_api) return console.error("文件上传接口未输入"), false;
+    return _api;
+  },
   submit: function submit(files, data) {
     var _file = files || this.state.files,
         _formData = new FormData(),
@@ -101,23 +109,49 @@ module.exports = znui.react.createClass({
     this.ajaxUpload(_formData);
   },
   ajaxUpload: function ajaxUpload(data) {
-    var _host = this.state.host || zn.setting.path('zr.uploader.uploadHost'),
-        _api = this.props.action || this.props.uploadApi || zn.setting.path('zr.uploader.uploadApi');
+    var _this = this;
 
-    _api = _host + _api;
-    if (!_api) return console.error("文件上传接口未输入"), false;
+    var _api = this.__resolveUploadAction();
+
+    if (!_api) return;
     this.setState({
       loading: true
     });
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", this.__ajaxUploadProgress, false);
-    xhr.addEventListener("load", this.__ajaxUploadComplete, false);
-    xhr.addEventListener("error", this.__ajaxUploadError, false);
-    xhr.addEventListener("abort", this.__ajaxUploadAbort, false);
+    xhr.upload.addEventListener("progress", function (event) {
+      return _this.__ajaxUploadProgress(event, xhr);
+    }, false);
+    xhr.addEventListener("load", function (event) {
+      return _this.__ajaxUploadComplete(event, xhr);
+    }, false);
+    xhr.addEventListener("error", function (event) {
+      return _this.__ajaxUploadError(event, xhr);
+    }, false);
+    xhr.addEventListener("abort", function (event) {
+      return _this.__ajaxUploadAbort(event, xhr);
+    }, false);
     xhr.open("POST", _api, "true");
+    xhr.withCredentials = true;
+
+    if (this.props.responseType) {
+      xhr.responseType = 'blob';
+    }
+
+    if (this.props.headers) {
+      for (var _key in this.props.headers) {
+        xhr.setRequestHeader(_key, this.props.headers[_key]);
+      }
+    }
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        this.props.onFinished && this.props.onFinished(xhr, this);
+      }
+    }.bind(this);
+
     xhr.send(data);
   },
-  __ajaxUploadProgress: function __ajaxUploadProgress(evt) {
+  __ajaxUploadProgress: function __ajaxUploadProgress(evt, xhr) {
     if (evt.lengthComputable) {
       evt.progress = Math.round(evt.loaded * 100 / evt.total);
       this.state.progress = evt.progress;
@@ -125,36 +159,38 @@ module.exports = znui.react.createClass({
       this.forceUpdate();
     }
 
-    this.props.onUploading && this.props.onUploading(evt, this);
+    this.props.onUploading && this.props.onUploading(evt, xhr, this);
   },
-  __ajaxUploadComplete: function __ajaxUploadComplete(evt) {
+  __ajaxUploadComplete: function __ajaxUploadComplete(evt, xhr) {
     this.reset();
     this.state.progress = 0;
     this.state.timeStamp = 0;
     this.forceUpdate();
 
-    if (evt.target.responseText.indexOf('<!DOCTYPE html>') == 0) {
-      return alert(evt.target.responseText), false;
-    }
+    if (typeof evt.target.response == 'string' && (evt.target.responseType == 'text' || evt.target.responseType == '')) {
+      if (evt.target.responseText.indexOf('<!DOCTYPE html>') == 0) {
+        return alert(evt.target.responseText), false;
+      }
 
-    if (evt.target.responseText.indexOf('{') == 0 || evt.target.responseText.indexOf('[') == 0) {
-      var _data = JSON.parse(evt.target.responseText);
+      if (evt.target.responseText.indexOf('{') == 0 || evt.target.responseText.indexOf('[') == 0) {
+        var _data = JSON.parse(evt.target.responseText);
 
-      if (_data.code == 200) {
-        this.props.onComplete && this.props.onComplete(_data.result, this);
-      } else {
-        console.error(_data.result || _data.message);
-        this.props.onError && this.props.onError(_data.result, this);
+        if (_data.code == 200) {
+          this.props.onComplete && this.props.onComplete(_data.result, evt, xhr, this);
+        } else {
+          zn.error(_data.result || _data.message);
+          this.props.onError && this.props.onError(_data.result, evt, xhr, this);
+        }
       }
     }
   },
-  __ajaxUploadError: function __ajaxUploadError(event) {
+  __ajaxUploadError: function __ajaxUploadError(event, xhr) {
     this.reset();
-    this.props.onError && this.props.onError(event.message, this);
+    this.props.onError && this.props.onError(event.message, xhr, this);
   },
-  __ajaxUploadAbort: function __ajaxUploadAbort(event) {
+  __ajaxUploadAbort: function __ajaxUploadAbort(event, xhr) {
     this.reset();
-    this.props.onAbort && this.props.onAbort(event, this);
+    this.props.onAbort && this.props.onAbort(event, xhr, this);
   },
   reset: function reset() {
     this.setState({
@@ -194,11 +230,9 @@ module.exports = znui.react.createClass({
     }
   },
   render: function render() {
-    var _host = this.state.host || zn.setting.path('zr.uploader.uploadHost'),
-        _api = this.props.action || this.props.uploadApi || zn.setting.path('zr.uploader.uploadApi');
+    var _api = this.__resolveUploadAction();
 
-    _api = _host + _api;
-    if (!_api) console.error("文件上传接口未输入");
+    if (!_api) return;
     return /*#__PURE__*/React.createElement("form", {
       className: znui.react.classname("zr-ajax-uploader", this.props.className),
       "data-loading": this.state.loading,

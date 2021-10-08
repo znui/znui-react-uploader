@@ -2,8 +2,6 @@
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -13,6 +11,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var React = znui.React || require('react');
 
 var AjaxUploader = require('./AjaxUploader');
+
+var FileListItem = require('./FileListItem');
 
 module.exports = znui.react.createClass({
   displayName: 'FileUploader',
@@ -29,7 +29,6 @@ module.exports = znui.react.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      host: this.props.host || zn.setting.path('zr.uploader.host'),
       value: [],
       files: [],
       compressing: false
@@ -117,31 +116,33 @@ module.exports = znui.react.createClass({
 
     this.props.onUploaderChange && this.props.onUploaderChange(files, ajaxUploader, this);
   },
-  initValue: function initValue(value) {
-    if (!value) return;
-
-    var _host = this.state.host,
+  __resolveFileApi: function __resolveFileApi() {
+    var _host = this.state.host || zn.setting.path('zr.uploader.host') || zn.setting.path('zr.uploader.uploadHost') || '',
         _api = this.props.fetchsApi || zn.setting.path('zr.uploader.fetchsApi');
 
     _api = _host + _api;
-    if (!_api) return console.error("文件验证接口未输入"), false;
+    if (!_api) return console.error("文件接口未输入"), false;
+    return _api;
+  },
+  initValue: function initValue(value) {
+    var _api = this.__resolveFileApi();
+
+    if (!value || !_api) return;
 
     if (zn.is(value, 'array')) {
       value = value.join(',');
     }
 
     zn.data.get(_api + value).then(function (response) {
-      if (zn.is(response, 'array')) {
-        this.setFiles(response);
-      } else if (zn.is(response, 'object')) {
-        if (response.status == 200 && _typeof(response.data) == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')) {
-          this.setFiles(response.data.result);
-        } else {
-          console.error("网络请求错误: ", response);
-        }
+      var _files = znui.react.resolveArrayResult(response);
+
+      if (_files) {
+        this.setFiles(_files);
+      } else {
+        console.error("FileUploader.js - 网络请求错误: ", response);
       }
-    }.bind(this), function () {
-      console.error("网络请求错误");
+    }.bind(this), function (err) {
+      console.error("FileUploader.js - 网络请求错误: ", err);
     });
   },
   __onComplete: function __onComplete(data, uploader) {
@@ -172,8 +173,8 @@ module.exports = znui.react.createClass({
       value: value
     });
   },
-  __onFileClick: function __onFileClick(file, index) {
-    var _return = this.props.onFileClick && this.props.onFileClick(file, index);
+  __editable: function __editable() {
+    return this.props.editable || !this.props.disabled || !this.props.readonly;
   },
   __onRemove: function __onRemove(file, index) {
     this.state.files.splice(index, 1);
@@ -186,43 +187,14 @@ module.exports = znui.react.createClass({
       files: this.state.files
     }, this);
   },
-  __fileDownloadRender: function __fileDownloadRender(file) {
-    var _this = this;
-
-    var _host = this.state.host || zn.setting.path('zr.uploader.downloadHost'),
-        _api = this.props.downloadApi || zn.setting.path('zr.uploader.downloadApi');
-
-    _api = _host + _api;
-
-    if (_api) {
-      return /*#__PURE__*/React.createElement("span", {
-        onClick: function onClick() {
-          return znui.downloadURL(_api + file[_this.props.valueKey], file.name);
-        },
-        className: "download"
-      }, /*#__PURE__*/React.createElement("svg", {
-        "aria-hidden": "true",
-        focusable: "false",
-        "data-prefix": "fas",
-        "data-icon": "download",
-        className: "svg-inline--fa fa-download fa-w-16 ",
-        role: "img",
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 512 512"
-      }, /*#__PURE__*/React.createElement("path", {
-        fill: "currentColor",
-        d: "M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"
-      })));
-    }
-  },
   __renderFiles: function __renderFiles() {
-    if (this.state.files) {
-      var _editable = this.props.editable && !this.props.disabled && !this.props.readonly;
+    if (this.state.files && this.state.files.length) {
+      var _editable = this.__editable();
 
-      return /*#__PURE__*/React.createElement("ul", {
+      return /*#__PURE__*/React.createElement("div", {
         className: "file-list"
       }, this.state.files.map(function (file, index) {
-        var _this2 = this;
+        var _this = this;
 
         if (file) {
           var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
@@ -231,38 +203,20 @@ module.exports = znui.react.createClass({
             return _temp;
           }
 
-          return /*#__PURE__*/React.createElement("li", {
+          return /*#__PURE__*/React.createElement(FileListItem, {
             key: file[this.props.valueKey],
-            className: "file"
-          }, _editable && /*#__PURE__*/React.createElement("svg", {
-            "aria-hidden": "true",
-            focusable: "false",
-            "data-prefix": "fas",
-            "data-icon": "trash-alt",
-            onClick: function onClick() {
-              return _this2.__onRemove(file, index);
-            },
-            className: "svg-inline--fa fa-remove zr-hover-self-loading fa-trash-alt fa-w-14 ",
-            role: "img",
-            xmlns: "http://www.w3.org/2000/svg",
-            viewBox: "0 0 448 512"
-          }, /*#__PURE__*/React.createElement("path", {
-            fill: "currentColor",
-            d: "M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
-          })), this.__fileDownloadRender(file, index), /*#__PURE__*/React.createElement("a", {
-            className: "link",
-            onClick: function onClick() {
-              return _this2.__onFileClick(file, index);
+            editable: _editable,
+            data: file,
+            onRemove: function onRemove() {
+              return _this.__onRemove(file, index);
             }
-          }, file.name), /*#__PURE__*/React.createElement("span", {
-            className: "size"
-          }, znui.react.stringifyFileSize(+file.size)));
+          });
         }
       }.bind(this)));
     }
   },
   render: function render() {
-    var _editable = this.props.editable && !this.props.disabled && !this.props.readonly;
+    var _editable = this.__editable();
 
     return /*#__PURE__*/React.createElement("div", {
       className: znui.react.classname("zr-file-uploader", this.props.className)

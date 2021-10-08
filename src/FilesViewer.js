@@ -1,5 +1,5 @@
 var React = znui.React || require('react');
-var FileViewer = require('./FileViewer');
+var FileListItem = require('./FileListItem');
 
 module.exports = znui.react.createClass({
 	displayName:'FilesViewer',
@@ -12,8 +12,8 @@ module.exports = znui.react.createClass({
 	},
 	getInitialState: function () {
     	return {
-			host: this.props.host || zn.setting.path('zr.uploader.host'),
-			files: []
+			files: [],
+			value: []
 		};
 	  },
 	componentDidMount: function (){
@@ -22,33 +22,40 @@ module.exports = znui.react.createClass({
 			this.initValue(this.props.value);
 		}
 	},
+	__resolveFileApi: function (){
+		var _host = this.props.host || zn.setting.path('zr.uploader.host') || zn.setting.path('zr.uploader.uploadHost') || '',
+			_api = this.props.fetchsApi || zn.setting.path('zr.uploader.fetchsApi');
+		_api = _host + _api;
+
+		if(_api) {
+			return _api;
+		}
+
+		return console.error("文件接口未输入"), false;
+	},
 	initValue: function (value){
-		if(!value) return;
-		if(zn.is(value[0], 'object')) {
+		var _api = this.__resolveFileApi();
+		if(!_api || !value) return;
+
+		if(zn.is(value, 'object')) {
 			return this.setFiles([value]), false;
 		}
 		if(zn.is(value, 'array') && value.length && zn.is(value[0], 'object')){
 			return this.setFiles(value), false;
 		}
-		var _host = this.state.host,
-			_api = this.props.fetchsApi || zn.setting.path('zr.uploader.fetchsApi');
-		_api = _host + _api;
-		if(!_api) return console.error("FilesViewer.js 文件验证接口未输入"), false;
+		
 		if(zn.is(value, 'array')){
 			value = value.join(',');
 		}
 		zn.data.get(_api + value).then(function (response){
-			if(zn.is(response, 'array')){
-				this.setFiles(response);
-			}else if(zn.is(response, 'object')){
-				if(response.status==200 && typeof response.data == 'object' && response.data.code == 200 && zn.is(response.data.result, 'array')){
-					this.setFiles(response.data.result);
-				}else{
-					console.error("FilesViewer.js 网络请求错误 ", response);
-				}
+			var _files = znui.react.resolveArrayResult(response);
+			if(_files){
+				this.setFiles(_files);
+			}else{
+				console.error("FilesViewer.js - 网络请求错误: ", response);
 			}
-		}.bind(this), function (){
-			console.error("FilesViewer.js 网络请求错误");
+		}.bind(this), function (err){
+			console.error("FilesViewer.js - 网络请求错误: ", err);
 		});
 	},
 	setFiles: function (files){
@@ -61,11 +68,12 @@ module.exports = znui.react.createClass({
 				{
 					this.state.files.map(function (file, index){
 						if(file){
-							var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
-							if(_temp){
-								return _temp;
+							var _return = this.props.onFileRender && this.props.onFileRender(file, index, this);
+							if(_return){
+								return _return;
 							}
-							return <FileViewer key={index} width={this.props.width} height={this.props.height} value={file} valueKey={this.props.valueKey} />;
+
+							return <FileListItem host={this.props.host} key={index} data={file} editable={this.props.editable} />;
 						}
 					}.bind(this))
 				}
@@ -73,6 +81,14 @@ module.exports = znui.react.createClass({
 		}
 	},
 	render: function(){
+		if(!this.state.files){
+			return (
+				<div className="zr-file-viewer">
+					<i className="fa fa-spinner" />
+					<span>加载中 ... </span>
+				</div>
+			);
+		}
 		return (
 			<div className={znui.react.classname("zr-files-viewer", this.props.className)} style={znui.react.style(this.props.style)}>
 				{this.__renderFiles()}

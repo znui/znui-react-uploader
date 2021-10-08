@@ -9,8 +9,8 @@ zn.setting.setKey('zr.uploader', zn.deepAssign({}, zn.setting.getKey('zr.uploade
 }));
 module.exports = {
   AjaxUploader: require('./AjaxUploader'),
+  FileListItem: require('./FileListItem'),
   FileUploader: require('./FileUploader'),
-  FileViewer: require('./FileViewer'),
   FilesViewer: require('./FilesViewer'),
   ImageUploader: require('./ImageUploader')
 };

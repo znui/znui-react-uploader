@@ -105,7 +105,7 @@ module.exports = React.createClass({
     var _file = data[0];
 
     if (_file) {
-      this.setValue(_file[this.props.valueKey || 'savedName']);
+      this.setValue(_file[this.props.valueKey || 'tempName']);
     }
 
     this.props.onComplete && this.props.onComplete(_file, this);
@@ -173,9 +173,9 @@ module.exports = React.createClass({
       className: "compress-info"
     }, /*#__PURE__*/React.createElement("div", {
       className: "original"
-    }, "\u538B\u7F29\u524D\uFF1A", this.state.original.width, " x ", this.state.original.height, " (", this.state.original.size, ")"), /*#__PURE__*/React.createElement("div", {
+    }, "\u524D\uFF1A", this.state.original.width, " x ", this.state.original.height, " (", this.state.original.size, ")"), /*#__PURE__*/React.createElement("div", {
       className: "compress"
-    }, "\u538B\u7F29\u540E\uFF1A", this.state.compress.width, " x ", this.state.compress.height, " (", this.state.compress.size, ")")), this.state.compressing && /*#__PURE__*/React.createElement("span", {
+    }, "\u540E\uFF1A", this.state.compress.width, " x ", this.state.compress.height, " (", this.state.compress.size, ")")), this.state.compressing && /*#__PURE__*/React.createElement("span", {
       className: "compressing"
     }, "\u538B\u7F29\u4E2D...")));
   }
