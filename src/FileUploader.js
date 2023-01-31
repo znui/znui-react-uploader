@@ -151,19 +151,21 @@ module.exports = znui.react.createClass({
 	__renderFiles: function (){
 		if(this.state.files && this.state.files.length){
 			var _editable = this.__editable();
-			return <div className="file-list">
-				{
-					this.state.files.map(function (file, index){
-						if(file){
-							var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
-							if(_temp){
-								return _temp;
+			return (
+				<div className="file-list">
+					{
+						this.state.files.map((file, index)=>{
+							if(file){
+								var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
+								if(_temp){
+									return _temp;
+								}
+								return <FileListItem key={file[this.props.valueKey]} editable={_editable} data={file} onRemove={()=>this.__onRemove(file, index)} />;
 							}
-							return <FileListItem key={file[this.props.valueKey]} editable={_editable} data={file} onRemove={()=>this.__onRemove(file, index)} />;
-						}
-					}.bind(this))
-				}
-			</div>;
+						})
+					}
+				</div>
+			);
 		}
 	},
 	render: function(){

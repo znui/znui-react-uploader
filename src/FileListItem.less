@@ -4,6 +4,7 @@
 
     &.full-screen{
         position: fixed;
+        background-color: #fdf7f7;
         width: 100%;
         height: 100%;
         top: -6px;
@@ -11,9 +12,13 @@
         bottom: 0px;
         right: 0px;
         z-index: 10;
-        overflow: auto;
+        overflow: hidden;
         .file-info{
-            right: auto;
+            position: fixed;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            height: 34px;
         }
         .file-view{
             display: flex;
@@ -43,7 +48,7 @@
         color: #2c49d8;
         border-collapse: collapse;
         background-color: #fbfbfb;
-        border: 1px dashed #d4d0d0;
+        border-bottom: 1px dashed #d4d0d0;
 
         .item-btns{
             font-size: 20px;
@@ -99,7 +104,7 @@
                 }
             }
 
-            &.fa-window-close{
+            &.fa-trash-alt{
                 color: #f14d6b;
                 &:hover{
                     color: #fb0733;
@@ -112,6 +117,11 @@
         display: inline-grid;
         width: 100%;
         height: 100%;
+        /*
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        */
         background-color: #fdf7f7;
         .view{
             border-collapse: collapse;

@@ -188,23 +188,23 @@ module.exports = znui.react.createClass({
     }, this);
   },
   __renderFiles: function __renderFiles() {
+    var _this = this;
+
     if (this.state.files && this.state.files.length) {
       var _editable = this.__editable();
 
       return /*#__PURE__*/React.createElement("div", {
         className: "file-list"
       }, this.state.files.map(function (file, index) {
-        var _this = this;
-
         if (file) {
-          var _temp = this.props.onFileRender && this.props.onFileRender(file, index);
+          var _temp = _this.props.onFileRender && _this.props.onFileRender(file, index);
 
           if (_temp) {
             return _temp;
           }
 
           return /*#__PURE__*/React.createElement(FileListItem, {
-            key: file[this.props.valueKey],
+            key: file[_this.props.valueKey],
             editable: _editable,
             data: file,
             onRemove: function onRemove() {
@@ -212,7 +212,7 @@ module.exports = znui.react.createClass({
             }
           });
         }
-      }.bind(this)));
+      }));
     }
   },
   render: function render() {

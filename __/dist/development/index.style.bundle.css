@@ -186,6 +186,7 @@
 }
 .zr-file-list-item.full-screen {
   position: fixed;
+  background-color: #fdf7f7;
   width: 100%;
   height: 100%;
   top: -6px;
@@ -193,10 +194,14 @@
   bottom: 0px;
   right: 0px;
   z-index: 10;
-  overflow: auto;
+  overflow: hidden;
 }
 .zr-file-list-item.full-screen .file-info {
-  right: auto;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  height: 34px;
 }
 .zr-file-list-item.full-screen .file-view {
   display: flex;
@@ -225,7 +230,7 @@
   color: #2c49d8;
   border-collapse: collapse;
   background-color: #fbfbfb;
-  border: 1px dashed #d4d0d0;
+  border-bottom: 1px dashed #d4d0d0;
 }
 .zr-file-list-item .file-info .item-btns {
   font-size: 20px;
@@ -276,16 +281,21 @@
 .zr-file-list-item .file-info .svg-inline--fa.fa-tv:hover {
   color: #3790f2;
 }
-.zr-file-list-item .file-info .svg-inline--fa.fa-window-close {
+.zr-file-list-item .file-info .svg-inline--fa.fa-trash-alt {
   color: #f14d6b;
 }
-.zr-file-list-item .file-info .svg-inline--fa.fa-window-close:hover {
+.zr-file-list-item .file-info .svg-inline--fa.fa-trash-alt:hover {
   color: #fb0733;
 }
 .zr-file-list-item .file-content {
   display: inline-grid;
   width: 100%;
   height: 100%;
+  /*
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        */
   background-color: #fdf7f7;
 }
 .zr-file-list-item .file-content .view {

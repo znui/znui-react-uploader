@@ -66,7 +66,9 @@ module.exports = znui.react.createClass({
 	__resolveUploadAction: function (){
 		var _host = this.state.host || zn.setting.path('zr.uploader.host') || zn.setting.path('zr.uploader.uploadHost') || '',
 			_api = this.props.action || this.props.uploadApi || zn.setting.path('zr.uploader.uploadApi') || '';
-		_api = _host + _api;
+		if(_api.indexOf('http') != 0 && _api.indexOf('https') != 0) {
+			_api = _host + _api;
+		}
 		if(!_api) return console.error("文件上传接口未输入"), false;
 
 		return _api;
