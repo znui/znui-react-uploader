@@ -72,25 +72,28 @@ module.exports = znui.react.createClass({
     this.forceUpdate();
   },
   __renderFiles: function __renderFiles() {
+    var _this = this;
+
     if (this.state.files) {
       return /*#__PURE__*/React.createElement("div", {
         className: "file-list"
       }, this.state.files.map(function (file, index) {
         if (file) {
-          var _return = this.props.onFileRender && this.props.onFileRender(file, index, this);
+          var _return = _this.props.onFileRender && _this.props.onFileRender(file, index, _this);
 
           if (_return) {
             return _return;
           }
 
           return /*#__PURE__*/React.createElement(FileListItem, {
-            host: this.props.host,
             key: index,
+            valueKey: "tempName",
+            host: _this.props.host,
             data: file,
-            editable: this.props.editable
+            editable: _this.props.editable
           });
         }
-      }.bind(this)));
+      }));
     }
   },
   render: function render() {

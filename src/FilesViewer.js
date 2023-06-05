@@ -66,16 +66,16 @@ module.exports = znui.react.createClass({
 		if(this.state.files){
 			return <div className="file-list">
 				{
-					this.state.files.map(function (file, index){
+					this.state.files.map((file, index)=>{
 						if(file){
 							var _return = this.props.onFileRender && this.props.onFileRender(file, index, this);
 							if(_return){
 								return _return;
 							}
 
-							return <FileListItem host={this.props.host} key={index} data={file} editable={this.props.editable} />;
+							return <FileListItem key={index} valueKey="tempName" host={this.props.host} data={file} editable={this.props.editable} />;
 						}
-					}.bind(this))
+					})
 				}
 			</div>;
 		}

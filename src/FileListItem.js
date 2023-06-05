@@ -10,13 +10,21 @@ module.exports = znui.react.createClass({
 			fullScreen: false
 		};
 	},
+	__download: function (path, file_name){
+		znui.downloadURL(path, file_name);
+	},
+	__getHost: function (){
+		return this.state.host || zn.setting.path('zr.uploader.downloadHost') || zn.setting.path('zr.uploader.host');
+	},
+	__getDownloadApi: function (){
+		return this.props.downloadApi || zn.setting.path('zr.uploader.downloadApi');
+	},
 	__fileDownloadRender: function (file){
-		var _host = this.state.host || zn.setting.path('zr.uploader.downloadHost'),
-			_api = this.props.downloadApi || zn.setting.path('zr.uploader.downloadApi');
-		_api = _host + _api;
+		var _api = this.__getHost() + this.__getDownloadApi();
 		if(_api){
+			var _path = _api + file[this.props.valueKey];
 			return (
-				<span onClick={()=>znui.downloadURL(_api + file[this.props.valueKey], file.name)} className="download">
+				<span onClick={()=>this.__download(_path, file.name)} className="download">
 					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="download" className="svg-inline--fa fa-download fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg>
 				</span>
 			);
@@ -29,23 +37,25 @@ module.exports = znui.react.createClass({
 			_view = <img style={{ width: '100%', height: 'auto' }} className="view img-view" src={_src} />;
 		}else if(file.type.indexOf('video') == 0){
 			_src = (this.props.host || zn.setting.path('zr.uploader.host') || '') + ('/zxnz.core.fs/fetch/video.play/') + file[this.props.valueKey || 'tempName'];
-			_view = <video
-				className="view ideo-view"
-				controls
-				preload="auto"
-				width={this.props.width} 
-				height={this.props.height}
-				poster={this.props.poster}>
-				<source src={_src} type="video/mp4" />
-				<source src={_src} type="video/webm" />
-				<p className="tips">
-					To view this video please enable JavaScript, and consider upgrading to a web browser that
-					<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-				</p>
-			</video>;
+			_view = (
+				<video
+					className="view ideo-view"
+					controls
+					preload="auto"
+					width={this.props.width} 
+					height={this.props.height}
+					poster={this.props.poster}>
+					<source src={_src} type="video/mp4" />
+					<source src={_src} type="video/webm" />
+					<p className="tips">
+						To view this video please enable JavaScript, and consider upgrading to a web browser that
+						<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+					</p>
+				</video>
+			);
 		}else if(OFFICE_TYPE.indexOf(file.ext) != -1){
 			_src = (this.props.host || zn.setting.path('zr.uploader.host') || '') + ('/zxnz.core.fs/fetch/readAsPDF/') + file[this.props.valueKey || 'tempName'];
-			_view = <PDFObject url={_src} height="100%" />;
+			_view = (<PDFObject url={_src} height="100%" />);
 		}
 
 		return (
@@ -67,10 +77,14 @@ module.exports = znui.react.createClass({
 		return <svg onClick={this.__fullScreen} aria-hidden="true" focusable="false" data-prefix="fas" data-icon="tv" className="svg-inline--fa fa-tv fa-w-20 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M592 0H48A48 48 0 0 0 0 48v320a48 48 0 0 0 48 48h240v32H112a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16H352v-32h240a48 48 0 0 0 48-48V48a48 48 0 0 0-48-48zm-16 352H64V64h512z"></path></svg>;
 	},
 	__fileDownloadRender: function (file){
-		var _host = this.state.host || zn.setting.path('zr.uploader.downloadHost'),
-			_api = this.props.downloadApi || zn.setting.path('zr.uploader.downloadApi');
-		_api = _host + _api;
+		var _api = this.__getHost() + this.__getDownloadApi();
 		if(_api){
+			var _path = _api + file[this.props.valueKey];
+			return (
+				<span onClick={()=>this.__download(_path, file.name)} className="download">
+					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="download" className="svg-inline--fa fa-download fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg>
+				</span>
+			);
 			return (
 				<span onClick={()=>znui.downloadURL(_api + file[this.props.valueKey], file.name)} className="download">
 					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="download" className="svg-inline--fa fa-download fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg>

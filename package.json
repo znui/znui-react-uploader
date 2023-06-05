@@ -1,6 +1,6 @@
 {
   "name": "znui-react-uploader",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Web Uploader component.",
   "main": "index.js",
   "scripts": {
